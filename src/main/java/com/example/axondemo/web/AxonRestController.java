@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
-public class axonRestController {
+public class AxonRestController {
 
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
