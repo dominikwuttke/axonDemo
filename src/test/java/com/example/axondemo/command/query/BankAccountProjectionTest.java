@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.server.EntityLinks;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,14 +45,17 @@ class BankAccountProjectionTest {
 
 
 
-//    @Test
+    @Test
     void onGetAccountsById() {
         String id = "99";
         int deposit = 20;
 
+
+
         fixture.given(new AccountCreatedEvent(id, deposit))
                 .when(new GetAccountByIdQuery(id))
-                .expectResultMessagePayload(new BankAccount(id, deposit));
+                .expectResultMessagePayload((new BankAccount(id,deposit)));
+
     }
 
     @Test

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 public class axonRestController {
 
@@ -46,18 +48,18 @@ public class axonRestController {
 
     @GetMapping("/createBankAccount")
     void createBankAccount() throws Exception{
-        commandGateway.send(new CreateAccountCommand("123456",150));
+        commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
     }
 
     @GetMapping("/accounts/{id}")
     public ResponseEntity<BankAccount> getAccountById(@PathVariable String id) throws Exception{
         return new ResponseEntity<>(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get(), HttpStatus.OK);
     }
-//
-//    @GetMapping("/accounts/reactive/{id}")
-//    Mono<BankAccount> getAccountByIdReactive(@PathVariable String id) throws Exception{
-//        return Mono.just(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get());
-//    }
+
+    @GetMapping("/accounts/reactive/{id}")
+    Mono<BankAccount> getAccountByIdReactive(@PathVariable String id) throws Exception{
+        return Mono.just(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get());
+    }
 
     @PutMapping("/")
     void add() throws Exception{
