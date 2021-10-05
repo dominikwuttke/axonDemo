@@ -4,6 +4,7 @@ import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.TestCommand;
 import com.example.axondemo.command.TestQuery;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
+import com.example.axondemo.command.coreapi.MoneyDepositCommand;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -70,6 +72,11 @@ public class AxonRestController {
     @PutMapping("/")
     void add() throws Exception{
         commandGateway.send(new TestCommand());
+    }
+    
+    @PostMapping("/accounts/{id}/{amount}")
+    void depositMoneyById(@PathVariable("id") final String id, @PathVariable("amount") final int deposit) throws Exception{
+        commandGateway.send(new MoneyDepositCommand(id, deposit));
     }
 
     private SubscriptionQueryResult<BankAccount,BankAccount> initialQuery;
