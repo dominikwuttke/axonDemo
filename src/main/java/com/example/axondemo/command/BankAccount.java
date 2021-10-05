@@ -33,19 +33,26 @@ public class BankAccount {
     private int deposit;
 
 
-
-
     @CommandHandler
-    public BankAccount(CreateAccountCommand command) {
+    public BankAccount(CreateAccountCommand command, PolicyDecisionPoint pdp) {
+        log.info("####command = {} pdp = {}", command, pdp);
 
+        // simple authorization subscription schreiben
+        // subject: action: create account ressource non existing account
+        // im pdp fragen und access denied schmeißen oder erlauben
+        // erstmal blockend (blockFirst)
         AggregateLifecycle.apply(new AccountCreatedEvent(command.getId(), command.getDeposit()));
     }
-//
-//    @CommandHandlerInterceptor
-//    public void intercept(CreateAccountCommand command, InterceptorChain interceptorChain) {
-//
-//
-//    }
+
+    @CommandHandlerInterceptor
+    public void intercept(CreateAccountCommand command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) {
+        log.info("###command = {} pdp = {}", command, pdp);
+
+        // wie getriggert? oder allgemeine Klasse?
+        // welcher user triggert event
+        // spring security, metadaten an command anfügen, metadaten in commandhandler injecten lassen,
+        // eventuell schon suer daten enthalten?
+    }
 
     @EventSourcingHandler
     public void on(AccountCreatedEvent event) {
