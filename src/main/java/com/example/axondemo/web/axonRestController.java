@@ -5,10 +5,13 @@ import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.TestCommand;
 import com.example.axondemo.command.TestQuery;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
-import com.example.axondemo.command.query.BankAccountProjection;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
-import com.example.axondemo.command.query.GetAccountsQuery;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
 import org.axonframework.queryhandling.QueryGateway;
 
 import org.springframework.hateoas.server.EntityLinks;
@@ -23,17 +26,14 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 public class axonRestController {
 
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
     private final EntityLinks entityLinks;
+    private final ReactorQueryGateway reactiveQueryGateway;
 
-    public  axonRestController(CommandGateway commandGateway, QueryGateway queryGateway, EntityLinks entityLinks){
-        this.commandGateway = commandGateway;
-        this.queryGateway = queryGateway;
-        this.entityLinks = entityLinks;
-    }
 
     @GetMapping("/")
     Integer get() throws Exception{
@@ -58,7 +58,7 @@ public class axonRestController {
 
     @GetMapping("/accounts/reactive/{id}")
     Mono<BankAccount> getAccountByIdReactive(@PathVariable String id) throws Exception{
-        return Mono.just(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get());
+        return reactiveQueryGateway.query(new GetAccountByIdQuery(id), BankAccount.class);
     }
 
     @PutMapping("/")
