@@ -1,10 +1,8 @@
 package com.example.axondemo.command;
-
 import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.axonframework.test.aggregate.FixtureConfiguration;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,13 +19,11 @@ class BankAccountTest {
     @Mock
     private BankAccount bankAccount;
 
-
     @BeforeEach
     public void setUp() {
         fixture = new AggregateTestFixture<>(BankAccount.class);
         fixture.registerInjectableResource(bankAccount);
     }
-
 
     @Test
     void handleAccountCreateCommand() {

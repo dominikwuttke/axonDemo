@@ -16,16 +16,16 @@ import org.axonframework.spring.stereotype.Aggregate;
 public class BankAccount {
 
     @AggregateIdentifier
-    String id;
-    int deposit;
+    private String id;
+    private int deposit;
 
     @CommandHandler
-    void BankAccount(CreateAccountCommand command) {
+    public BankAccount(CreateAccountCommand command) {
         AggregateLifecycle.apply(new AccountCreatedEvent(command.getId(), command.getDeposit()));
     }
 
     @EventSourcingHandler
-    void on(AccountCreatedEvent event) {
+    public void on(AccountCreatedEvent event) {
         this.id = event.getId();
         this.deposit = event.getDeposit();
     }
