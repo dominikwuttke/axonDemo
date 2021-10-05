@@ -2,12 +2,18 @@ package com.example.axondemo.command;
 
 import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
+import com.example.axondemo.command.coreapi.MoneyDepositCommand;
+import com.example.axondemo.command.coreapi.MoneyDepositEvent;
+
 import io.sapl.api.pdp.PolicyDecisionPoint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
+
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.messaging.InterceptorChain;
@@ -57,6 +63,18 @@ public class BankAccount {
     @EventSourcingHandler
     public void on(AccountCreatedEvent event) {
         this.id = event.getId();
+        this.deposit = event.getDeposit();
+    }
+    
+    @CommandHandler
+    public BankAccount(MoneyDepositCommand command) {
+    	AggregateLifecycle.apply(new MoneyDepositEvent(command.getId(), command.getDeposit()));
+    }
+    
+    @EventSourcingHandler
+    public void on(MoneyDepositEvent event) {
+        //this.id = event.getId();
+    	this.id = UUID.randomUUID().toString();
         this.deposit = event.getDeposit();
     }
 }
