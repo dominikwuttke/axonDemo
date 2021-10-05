@@ -17,11 +17,14 @@ import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -69,13 +72,13 @@ public class axonRestController {
         commandGateway.send(new TestCommand());
     }
 
-    private SubscriptionQueryResult<Optional<BankAccount>,BankAccount> initialQuery;
+    private SubscriptionQueryResult<BankAccount,BankAccount> initialQuery;
 
-    @GetMapping("/subscribeAccounts")
-    Stream<BankAccount> getAccounts() throws Exception{
-        initialQuery = queryGateway.subscriptionQuery(new GetAccountByIdQuery("5"), ResponseTypes.optionalInstanceOf(BankAccount.class),ResponseTypes.instanceOf(BankAccount.class));
-        initialQuery.updates().subscribe(account -> System.out.printf("account "+account.getId()));
-        return initialQuery.initialResult().block().stream();
+    @GetMapping(value = "/subscribeAccounts", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    Flux<ServerSentEvent<BankAccount>> getAccounts() throws Exception{
+        return reactiveQueryGateway.subscriptionQuery(new GetAccountByIdQuery("5"),ResponseTypes.instanceOf(BankAccount.class)).
+                map(bankAccount -> ServerSentEvent.<BankAccount>builder().data(bankAccount).build());
+
     }
 
 
