@@ -45,28 +45,7 @@ class BankAccountProjectionTest {
 
 
 
-    @Test
-    void onGetAccountsById() {
-        String id = "99";
-        int deposit = 20;
 
-
-
-        fixture.given(new AccountCreatedEvent(id, deposit))
-                .when(new GetAccountByIdQuery(id))
-                .expectResultMessagePayload((new BankAccount(id,deposit)));
-
-    }
-
-    @Test
-    void getAccountById() {
-
-       // axonRestController controller = new axonRestController(commandGateway, queryGateway);
-
-        GetAccountByIdQuery query = new GetAccountByIdQuery("10");
-
-
-    }
 
     @Test
     void on() {
