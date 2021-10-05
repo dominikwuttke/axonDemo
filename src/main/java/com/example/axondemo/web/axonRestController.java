@@ -1,16 +1,16 @@
 package com.example.axondemo.web;
 
-
 import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.TestCommand;
 import com.example.axondemo.command.TestQuery;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
-import com.example.axondemo.command.query.BankAccountProjection;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
-import com.example.axondemo.command.query.GetAccountsQuery;
-import com.example.axondemo.command.query.TrackBankAccount;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.messaging.responsetypes.ResponseType;
+import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 
@@ -22,26 +22,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+
 @RestController
+@RequiredArgsConstructor
 public class axonRestController {
 
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
-    private final EntityLinks entityLinks;
+    private final ReactorQueryGateway reactiveQueryGateway;
 
-    public  axonRestController(CommandGateway commandGateway, QueryGateway queryGateway, EntityLinks entityLinks){
-        this.commandGateway = commandGateway;
-        this.queryGateway = queryGateway;
-        this.entityLinks = entityLinks;
-    }
 
     @GetMapping("/")
     Integer get() throws Exception{
@@ -66,7 +61,7 @@ public class axonRestController {
 
     @GetMapping("/accounts/reactive/{id}")
     Mono<BankAccount> getAccountByIdReactive(@PathVariable String id) throws Exception{
-        return Mono.just(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get());
+        return reactiveQueryGateway.query(new GetAccountByIdQuery(id), BankAccount.class);
     }
 
     @PutMapping("/")
@@ -80,7 +75,6 @@ public class axonRestController {
     Stream<BankAccount> getAccounts() throws Exception{
         initialQuery = queryGateway.subscriptionQuery(new GetAccountByIdQuery("5"), ResponseTypes.optionalInstanceOf(BankAccount.class),ResponseTypes.instanceOf(BankAccount.class));
         initialQuery.updates().subscribe(account -> System.out.printf("account "+account.getId()));
-
         return initialQuery.initialResult().block().stream();
     }
 

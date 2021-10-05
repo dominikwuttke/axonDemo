@@ -61,7 +61,7 @@ class BankAccountProjectionTest {
     @Test
     void getAccountById() {
 
-        axonRestController controller = new axonRestController(commandGateway, queryGateway, entityLinks);
+       // axonRestController controller = new axonRestController(commandGateway, queryGateway);
 
         GetAccountByIdQuery query = new GetAccountByIdQuery("10");
 

@@ -27,7 +27,6 @@ public class BankAccountProjection {
         account.setId(id);
         account.setDeposit(deposit);
 
-        queryUpdateEmitter.emit(GetAccountByIdQuery.class,query -> false,account);
         queryUpdateEmitter.emit(GetAccountByIdQuery.class,query -> true,account);
     }
 
