@@ -38,6 +38,7 @@
         </dependency>
 
         <!-- Axon -->
+        <!-- Mongo-->
         <dependency>
             <groupId>org.axonframework.extensions.mongo</groupId>
             <artifactId>axon-mongo</artifactId>
@@ -48,6 +49,8 @@
             <artifactId>axon-eventsourcing</artifactId>
             <version>4.5.1</version>
         </dependency>
+
+
         <dependency>
             <groupId>org.axonframework</groupId>
             <artifactId>axon-spring-boot-starter</artifactId>
@@ -78,6 +81,11 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
 
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
 

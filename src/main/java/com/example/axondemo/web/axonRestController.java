@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class axonRestController {
 
-
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
     private final EntityLinks entityLinks;
