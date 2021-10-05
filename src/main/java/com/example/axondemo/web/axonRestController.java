@@ -8,9 +8,13 @@ import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.query.BankAccountProjection;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
 import com.example.axondemo.command.query.GetAccountsQuery;
+import com.example.axondemo.command.query.TrackBankAccount;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.messaging.responsetypes.ResponseType;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 
+import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +22,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 @RestController
 public class axonRestController {
@@ -65,5 +73,16 @@ public class axonRestController {
     void add() throws Exception{
         commandGateway.send(new TestCommand());
     }
+
+    private SubscriptionQueryResult<Optional<BankAccount>,BankAccount> initialQuery;
+
+    @GetMapping("/subscribeAccounts")
+    Stream<BankAccount> getAccounts() throws Exception{
+        initialQuery = queryGateway.subscriptionQuery(new GetAccountByIdQuery("5"), ResponseTypes.optionalInstanceOf(BankAccount.class),ResponseTypes.instanceOf(BankAccount.class));
+        initialQuery.updates().subscribe(account -> System.out.printf("account "+account.getId()));
+
+        return initialQuery.initialResult().block().stream();
+    }
+
 
 }
