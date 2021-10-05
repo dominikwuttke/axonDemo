@@ -54,6 +54,11 @@
             <artifactId>axon-eventsourcing</artifactId>
             <version>4.5.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.axonframework.extensions.reactor</groupId>
+            <artifactId>axon-reactor-spring-boot-starter</artifactId>
+            <version>4.5</version>
+        </dependency>
 
 
         <dependency>
