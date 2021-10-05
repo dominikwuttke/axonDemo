@@ -4,6 +4,7 @@ package com.example.axondemo.web;
 import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.TestCommand;
 import com.example.axondemo.command.TestQuery;
+import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.query.BankAccountProjection;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
 import com.example.axondemo.command.query.GetAccountsQuery;
@@ -41,6 +42,11 @@ public class axonRestController {
     @GetMapping("/testCommand")
     void testAdd() throws Exception{
         commandGateway.send(new TestCommand());
+    }
+
+    @GetMapping("/createBankAccount")
+    void createBankAccount() throws Exception{
+        commandGateway.send(new CreateAccountCommand("123456",150));
     }
 
     @GetMapping("/accounts/{id}")

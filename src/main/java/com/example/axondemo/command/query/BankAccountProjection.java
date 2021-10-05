@@ -4,9 +4,11 @@ import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class BankAccountProjection {
 
     private BankAccount account;
