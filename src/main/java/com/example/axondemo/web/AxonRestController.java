@@ -58,12 +58,12 @@ public class AxonRestController {
     }
 
     @GetMapping("/accounts/{id}")
-    public ResponseEntity<BankAccount> getAccountById(@PathVariable String id) throws Exception{
+    public ResponseEntity<BankAccount> getAccountById(@PathVariable("id") final String id) throws Exception{
         return new ResponseEntity<>(queryGateway.query(new GetAccountByIdQuery(id), BankAccount.class).get(), HttpStatus.OK);
     }
 
     @GetMapping("/accounts/reactive/{id}")
-    Mono<BankAccount> getAccountByIdReactive(@PathVariable String id) throws Exception{
+    Mono<BankAccount> getAccountByIdReactive(@PathVariable("id") final String id) throws Exception{
         return reactiveQueryGateway.query(new GetAccountByIdQuery(id), BankAccount.class);
     }
 
