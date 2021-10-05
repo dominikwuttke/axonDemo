@@ -2,6 +2,8 @@ package com.example.axondemo.command;
 
 import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -12,7 +14,9 @@ import org.axonframework.spring.stereotype.Aggregate;
 
 @Aggregate
 @NoArgsConstructor
+@AllArgsConstructor
 @Slf4j
+@Data
 public class BankAccount {
 
     @AggregateIdentifier
