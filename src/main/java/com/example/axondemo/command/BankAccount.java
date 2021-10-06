@@ -19,6 +19,8 @@ import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositEvent;
+import com.example.axondemo.command.coreapi.MoneyWithdrawCommand;
+import com.example.axondemo.command.coreapi.MoneyWithdrawEvent;
 
 import io.sapl.api.pdp.PolicyDecisionPoint;
 import lombok.AllArgsConstructor;
@@ -68,11 +70,18 @@ public class BankAccount {
     public void interceptCommand(Object command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
         log.info("command = {} pdp = {}", command, pdp);
 
-
-        // wie getriggert? oder allgemeine Klasse?
-        // welcher user triggert event
-        // spring security, metadaten an command anfügen, metadaten in commandhandler injecten lassen,
-        // eventuell schon suer daten enthalten?
+        AuthorizationSubscription authzSubscription =
+       	AuthorizationSubscription.of("MaxUser", "create",
+       	this.getClass().getSimpleName()); 
+        var authzDec = pdp.decide(authzSubscription).blockFirst();
+		 
+		 if (authzDec.getDecision() != Decision.DENY) {
+		 log.info("### CommandHandler : pdp ");
+		 interceptorChain.proceed(); 
+		 
+		 }
+		 log.info("Command intercepted");
+        
     }
     
     @MessageHandlerInterceptor
@@ -96,7 +105,18 @@ public class BankAccount {
     
     @EventSourcingHandler
     public void on(MoneyDepositEvent event) {
-        //this.id = event.getId();
+    	this.id = UUID.randomUUID().toString();
+        this.deposit = event.getDeposit();
+    }
+    
+    @CommandHandler
+    public void depositBankAccount(MoneyWithdrawCommand command) {
+    	log.info("MoneyWithdrawCommand = {}", command);
+    	apply(new MoneyWithdrawEvent(command.getId(), command.getDeposit()));
+    }
+    
+    @EventSourcingHandler
+    public void on(MoneyWithdrawEvent event) {
     	this.id = UUID.randomUUID().toString();
         this.deposit = event.getDeposit();
     }

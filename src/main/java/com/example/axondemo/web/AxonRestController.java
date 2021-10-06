@@ -5,6 +5,7 @@ import com.example.axondemo.command.TestCommand;
 import com.example.axondemo.command.TestQuery;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositCommand;
+import com.example.axondemo.command.coreapi.MoneyWithdrawCommand;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
 
 import lombok.AllArgsConstructor;
@@ -87,11 +88,16 @@ public class AxonRestController {
         commandGateway.send(new TestCommand());
     }
     
-    @PostMapping("/accounts/{id}/{amount}")
+    @PutMapping("/deposit/{id}/{amount}")
     void depositMoneyById(@PathVariable("id") final String id, @PathVariable("amount") final int deposit) throws Exception{
         commandGateway.send(new MoneyDepositCommand(id, deposit));
 
 
+    }
+    
+    @PutMapping("/withdraw/{id}/{amount}")
+    void withdrawMoneyById(@PathVariable("id") final String id, @PathVariable("amount") final int deposit) throws Exception{
+        commandGateway.send(new MoneyWithdrawCommand(id, deposit));
     }
 
     private SubscriptionQueryResult<BankAccount,BankAccount> initialQuery;
