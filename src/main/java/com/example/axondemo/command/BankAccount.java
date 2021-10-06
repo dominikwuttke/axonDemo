@@ -79,11 +79,18 @@ public class BankAccount {
     public void interceptCommand(Object command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
         log.info("command = {} pdp = {}", command, pdp);
 
-
-        // wie getriggert? oder allgemeine Klasse?
-        // welcher user triggert event
-        // spring security, metadaten an command anfügen, metadaten in commandhandler injecten lassen,
-        // eventuell schon suer daten enthalten?
+        AuthorizationSubscription authzSubscription =
+       	AuthorizationSubscription.of("MaxUser", "create",
+       	this.getClass().getSimpleName()); 
+        var authzDec = pdp.decide(authzSubscription).blockFirst();
+		 
+		 if (authzDec.getDecision() != Decision.DENY) {
+		 log.info("### CommandHandler : pdp ");
+		 interceptorChain.proceed(); 
+		 
+		 }
+		 log.info("Command intercepted");
+        
     }
     
     @MessageHandlerInterceptor
