@@ -19,6 +19,8 @@ import com.example.axondemo.command.coreapi.AccountCreatedEvent;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositEvent;
+import com.example.axondemo.command.coreapi.MoneyWithdrawCommand;
+import com.example.axondemo.command.coreapi.MoneyWithdrawEvent;
 
 import io.sapl.api.pdp.PolicyDecisionPoint;
 import lombok.AllArgsConstructor;
@@ -114,7 +116,18 @@ public class BankAccount {
     
     @EventSourcingHandler
     public void on(MoneyDepositEvent event) {
-        //this.id = event.getId();
+    	this.id = UUID.randomUUID().toString();
+        this.deposit = event.getDeposit();
+    }
+    
+    @CommandHandler
+    public void depositBankAccount(MoneyWithdrawCommand command) {
+    	log.info("MoneyWithdrawCommand = {}", command);
+    	apply(new MoneyWithdrawEvent(command.getId(), command.getDeposit()));
+    }
+    
+    @EventSourcingHandler
+    public void on(MoneyWithdrawEvent event) {
     	this.id = UUID.randomUUID().toString();
         this.deposit = event.getDeposit();
     }
