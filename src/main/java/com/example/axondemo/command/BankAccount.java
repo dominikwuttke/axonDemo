@@ -2,12 +2,15 @@ package com.example.axondemo.command;
 
 import java.util.UUID;
 
+import io.sapl.api.pdp.AuthorizationSubscription;
+import io.sapl.api.pdp.Decision;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.messaging.InterceptorChain;
+import org.axonframework.messaging.MetaData;
 import org.axonframework.messaging.interceptors.MessageHandlerInterceptor;
 import org.axonframework.modelling.command.AggregateIdentifier;
-import org.axonframework.modelling.command.AggregateLifecycle;
+import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 import org.axonframework.modelling.command.CommandHandlerInterceptor;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.data.mongodb.core.query.Meta;
 
 
 @Data
@@ -42,30 +45,50 @@ public class BankAccount {
      * Interceptor funktioniert bei Konstruktur nicht.
      */
     @CommandHandler
-    public BankAccount(CreateAccountCommand command, PolicyDecisionPoint pdp) {
-        log.info("#### command = {} pdp = {}", command, pdp);
+    public BankAccount(CreateAccountCommand command, PolicyDecisionPoint pdp, MetaData meta) throws Exception {
 
+        // Schufa Prüfung etc.
+        // Invarianten überprüfen
+
+        log.info("#### command = {} pdp = {} meta = {} ", command, pdp, meta);
+
+        String user = meta.get("userDummy").toString();
+        log.info("### user{}", user);
+
+        AuthorizationSubscription authzSubscription =
+                AuthorizationSubscription.of("MaxUser", "create", this.getClass().getSimpleName());
+        // pattern überlegen, acttion auch unique
+
+
+        //block ! sequentielle Abarbeitung
+        var authzDec = pdp.decide(authzSubscription).blockFirst();
+
+        if (authzDec.getDecision() == Decision.DENY) {
+            log.info("### CommandHandler : pdp - denied");
+            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
+        }
         // simple authorization subscription schreiben
         // subject: action: create account ressource non existing account
         // im pdp fragen und access denied schmeißen oder erlauben
         // erstmal blockend (blockFirst)
-        AggregateLifecycle.apply(new AccountCreatedEvent(command.getId(), command.getDeposit()));
+        apply(new AccountCreatedEvent(command.getId(), command.getDeposit()));
+
     }
 
     @CommandHandlerInterceptor
     public void interceptCommand(Object command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
         log.info("command = {} pdp = {}", command, pdp);
 
+
         // wie getriggert? oder allgemeine Klasse?
         // welcher user triggert event
         // spring security, metadaten an command anfügen, metadaten in commandhandler injecten lassen,
         // eventuell schon suer daten enthalten?
-        interceptorChain.proceed();
     }
     
     @MessageHandlerInterceptor
-    public void interceptEvent(Object event, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
-    	log.info("Event/Command = {} pdp = {}", event, pdp);
+    public void interceptEvent(Object message, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
+    	log.info("Event/Command = {} pdp = {}", message, pdp);
 
         interceptorChain.proceed();
     }
@@ -79,7 +102,7 @@ public class BankAccount {
     @CommandHandler
     public void depositBankAccount(MoneyDepositCommand command) {
     	log.info("MoneyDepositCommand = {}", command);
-    	AggregateLifecycle.apply(new MoneyDepositEvent(command.getId(), command.getDeposit()));
+    	apply(new MoneyDepositEvent(command.getId(), command.getDeposit()));
     }
     
     @EventSourcingHandler

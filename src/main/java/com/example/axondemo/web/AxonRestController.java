@@ -10,8 +10,10 @@ import com.example.axondemo.command.query.GetAccountByIdQuery;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import org.axonframework.commandhandling.GenericCommandMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.extensions.reactor.queryhandling.gateway.ReactorQueryGateway;
+import org.axonframework.messaging.MetaData;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -56,7 +59,15 @@ public class AxonRestController {
 
     @GetMapping("/createBankAccount")
     void createBankAccount() throws Exception{
-        commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
+
+        Map<String,String> user = Map.of("userDummy" , "max" );
+        MetaData meta = MetaData.from(user);
+
+        CreateAccountCommand command = new CreateAccountCommand(UUID.randomUUID().toString(),150);
+        commandGateway.send(GenericCommandMessage.asCommandMessage(command).andMetaData(meta));
+
+
+//        commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
     }
 
     @GetMapping("/accounts/{id}")
@@ -77,6 +88,8 @@ public class AxonRestController {
     @PostMapping("/accounts/{id}/{amount}")
     void depositMoneyById(@PathVariable("id") final String id, @PathVariable("amount") final int deposit) throws Exception{
         commandGateway.send(new MoneyDepositCommand(id, deposit));
+
+
     }
 
     private SubscriptionQueryResult<BankAccount,BankAccount> initialQuery;

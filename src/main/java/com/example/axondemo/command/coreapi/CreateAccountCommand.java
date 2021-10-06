@@ -9,6 +9,4 @@ public class CreateAccountCommand {
     @TargetAggregateIdentifier
     String id;
     int deposit;
-
-
 }

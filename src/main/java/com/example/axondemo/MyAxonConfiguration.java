@@ -2,17 +2,19 @@ package com.example.axondemo;
 
 
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClientFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.eventsourcing.eventstore.EmbeddedEventStore;
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.extensions.mongo.DefaultMongoTemplate;
 import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoEventStorageEngine;
-import org.axonframework.serialization.json.JacksonSerializer;
 import org.axonframework.spring.config.AxonConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class MyAxonConfiguration {
 
@@ -31,5 +33,13 @@ public class MyAxonConfiguration {
         return MongoEventStorageEngine.builder()
                 .mongoTemplate(DefaultMongoTemplate.builder().mongoDatabase(client).build())
                 .build();
+    }
+
+    @Bean
+    public CommandBus registerMessageHandlerInterceptors() {
+        log.info("### registering MessageHandler Interceptors");
+        CommandBus commandBus = SimpleCommandBus.builder().build();
+        commandBus.registerHandlerInterceptor(new MetaDataCommandInterceptor());
+        return commandBus;
     }
 }
