@@ -52,6 +52,14 @@ public class PdpCommandInterceptor implements MessageHandlerInterceptor<CommandM
         if (authzDec.getDecision() == Decision.DENY) {
             log.info("### PdpCommandInterceptor : pdp - denied");
 //            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
+
+            // throw Exception
+
+            // authInterceptor (nicht in Reihenfolge):
+            // weitergeleitet an ein Auth Aggregate (ruft pdp auf)
+            // ersetzt in neues command: AuthorisiereCommand mit dem ursprünglichen als Payload
+            // dann weiterleiten an die darunterliegende Struktur (geht jetzt durch den Autorisierungsinterceptor)
+
             return null;
 
         }
