@@ -52,23 +52,12 @@ public class BankAccount {
         // Schufa Prüfung etc.
         // Invarianten überprüfen
 
-        log.info("#### command = {} pdp = {} meta = {} ", command, pdp, meta);
 
-        String user = meta.get("userDummy").toString();
-        log.info("### user{}", user);
-
-        AuthorizationSubscription authzSubscription =
-                AuthorizationSubscription.of("MaxUser", "create", this.getClass().getSimpleName());
         // pattern überlegen, acttion auch unique
 
 
         //block ! sequentielle Abarbeitung
-        var authzDec = pdp.decide(authzSubscription).blockFirst();
 
-        if (authzDec.getDecision() == Decision.DENY) {
-            log.info("### CommandHandler : pdp - denied");
-            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
-        }
         // simple authorization subscription schreiben
         // subject: action: create account ressource non existing account
         // im pdp fragen und access denied schmeißen oder erlauben

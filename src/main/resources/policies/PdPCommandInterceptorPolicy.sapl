@@ -1,0 +1,23 @@
+import filter.*
+
+set "PdPCommandInterceptor"
+first-applicable
+
+
+/*
+ * This 'for' statement ensures, that the policies are only checked when they are actions, e.g., method calls,
+ * in the designated Java class.
+ * In this case, spring will indirectly implement the PatientRepository interface and it may not appear directly 
+ * in the method signatures, e.g. when using default methods from CrudRepositories. Thus we inspect the class 
+ * hierarchy and interfaces implemented by the class to scope the policy set. 
+ */
+//for "PdPCommandInterceptor" in action.java.instanceof.simpleName
+
+policy "create_account"
+permit
+
+    action == "createAccount" &
+    resource == "/createBankAccount"
+where
+    subject == "axon"
+    ;

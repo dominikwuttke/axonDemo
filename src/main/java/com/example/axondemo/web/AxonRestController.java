@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.security.PermitAll;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
 
 
 @RestController
+@PermitAll
 @RequiredArgsConstructor
 public class AxonRestController {
 
@@ -61,14 +63,14 @@ public class AxonRestController {
     @GetMapping("/createBankAccount")
     void createBankAccount() throws Exception{
 
-        Map<String,String> user = Map.of("userDummy" , "max" );
-        MetaData meta = MetaData.from(user);
+//        Map<String,String> user = Map.of("userDummy" , "max" );
+//        MetaData meta = MetaData.from(user);
 
-        CreateAccountCommand command = new CreateAccountCommand(UUID.randomUUID().toString(),150);
-        commandGateway.send(GenericCommandMessage.asCommandMessage(command).andMetaData(meta));
+//        CreateAccountCommand command = new CreateAccountCommand(UUID.randomUUID().toString(),150);
+//        commandGateway.send(GenericCommandMessage.asCommandMessage(command).andMetaData(meta));
 
 
-//        commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
+        commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
     }
 
     @GetMapping("/accounts/{id}")
