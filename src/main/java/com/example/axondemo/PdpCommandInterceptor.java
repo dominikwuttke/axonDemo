@@ -35,19 +35,29 @@ public class PdpCommandInterceptor implements MessageHandlerInterceptor<CommandM
         MetaData meta = command.getMetaData();
         String userName = meta.get("userName").toString();
 
+//        AuthorizationSubscription authzSubscription =
+//                AuthorizationSubscription.of(userName, "*", "*");
+
+
+
         AuthorizationSubscription authzSubscription =
-                AuthorizationSubscription.of(userName, "*", "*");
+                AuthorizationSubscription.of(userName, "createAccount", "/createBankAccount");
+
+
 
         // nebenläufig sinnvoll????
         var authzDec = pdp.decide(authzSubscription).blockFirst();
 
 
         if (authzDec.getDecision() == Decision.DENY) {
-            log.info("### CommandHandler : pdp - denied");
+            log.info("### PdpCommandInterceptor : pdp - denied");
 //            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
+            return null;
 
         }
 
+
+        log.info("### PdpCommandInterceptor : pdp - permit");
 
         return interceptorChain.proceed();
     }

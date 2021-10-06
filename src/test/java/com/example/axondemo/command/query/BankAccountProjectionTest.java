@@ -2,8 +2,6 @@ package com.example.axondemo.command.query;
 
 import com.example.axondemo.command.BankAccount;
 import com.example.axondemo.command.coreapi.AccountCreatedEvent;
-import com.example.axondemo.command.coreapi.CreateAccountCommand;
-import com.example.axondemo.web.AxonRestController;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.test.aggregate.AggregateTestFixture;
@@ -14,11 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.http.ResponseEntity;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 //@SpringBootTest
 @ExtendWith(MockitoExtension.class)
