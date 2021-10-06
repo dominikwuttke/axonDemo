@@ -2,6 +2,7 @@ package com.example.axondemo;
 
 
 import com.mongodb.client.MongoClient;
+import io.sapl.api.pdp.PolicyDecisionPoint;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
@@ -36,10 +37,11 @@ public class MyAxonConfiguration {
     }
 
     @Bean
-    public CommandBus registerMessageHandlerInterceptors() {
+    public CommandBus registerMessageHandlerInterceptors(PolicyDecisionPoint pdp) {
         log.info("### registering MessageHandler Interceptors");
         CommandBus commandBus = SimpleCommandBus.builder().build();
         commandBus.registerHandlerInterceptor(new MetaDataCommandInterceptor());
+        commandBus.registerHandlerInterceptor(new PdpCommandInterceptor(pdp));
         return commandBus;
     }
 }

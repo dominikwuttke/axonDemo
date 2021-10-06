@@ -65,7 +65,7 @@ public class BankAccount {
 
         if (authzDec.getDecision() == Decision.DENY) {
             log.info("### CommandHandler : pdp - denied");
-            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
+//            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
         }
         // simple authorization subscription schreiben
         // subject: action: create account ressource non existing account
