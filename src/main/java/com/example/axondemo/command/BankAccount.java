@@ -53,7 +53,7 @@ public class BankAccount {
     }
 
     @CommandHandlerInterceptor
-    public void interceptCommand(CreateAccountCommand command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
+    public void interceptCommand(Object command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
         log.info("command = {} pdp = {}", command, pdp);
 
         // wie getriggert? oder allgemeine Klasse?
