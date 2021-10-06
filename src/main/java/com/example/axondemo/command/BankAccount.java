@@ -53,7 +53,7 @@ public class BankAccount {
     }
 
     @CommandHandlerInterceptor
-    public void interceptCommand(Object command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
+    public void interceptCommand(CreateAccountCommand command, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
         log.info("command = {} pdp = {}", command, pdp);
 
         // wie getriggert? oder allgemeine Klasse?
@@ -65,7 +65,7 @@ public class BankAccount {
     
     @MessageHandlerInterceptor
     public void interceptEvent(Object event, InterceptorChain interceptorChain, PolicyDecisionPoint pdp) throws Exception {
-    	log.info("Event = {} pdp = {}", event, pdp);
+    	log.info("Event/Command = {} pdp = {}", event, pdp);
 
         interceptorChain.proceed();
     }
@@ -77,7 +77,8 @@ public class BankAccount {
     }
     
     @CommandHandler
-    public BankAccount(MoneyDepositCommand command) {
+    public void depositBankAccount(MoneyDepositCommand command) {
+    	log.info("MoneyDepositCommand = {}", command);
     	AggregateLifecycle.apply(new MoneyDepositEvent(command.getId(), command.getDeposit()));
     }
     
