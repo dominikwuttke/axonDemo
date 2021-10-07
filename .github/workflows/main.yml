@@ -19,8 +19,9 @@ jobs:
     
     strategy:
       matrix:
-        Java: ['17']
+        Java: ['11', '17']
         os: [windows-latest, macOS-latest]
+        mongodb-version: ['4.4']
     name: Test on JDK ${{ matrix.Java }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
@@ -35,7 +36,12 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}    
-        
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.6.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+
     - name: Cache Maven dependencies
       uses: actions/cache@v2
       with:
