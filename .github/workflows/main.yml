@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         Java: ['11', '17']
-        os:  [ubuntu-latest]
+        os:  [ubuntu-latest, windows-latest, macOS-latest]
         mongodb-version: ['4.4']
     name: Test on JDK ${{ matrix.Java }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
