@@ -39,6 +39,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .build();
 //    }
 
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception{
+		super.configure(http);
+		http.csrf().disable();
+	}
+	
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
