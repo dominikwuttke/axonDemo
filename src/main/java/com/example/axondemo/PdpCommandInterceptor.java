@@ -12,6 +12,8 @@ import org.axonframework.messaging.MessageHandlerInterceptor;
 import org.axonframework.messaging.MetaData;
 import org.axonframework.messaging.unitofwork.UnitOfWork;
 
+import com.example.axondemo.command.coreapi.CreateAccountRejectedCommand;
+
 import java.util.Map;
 
 @Slf4j
@@ -27,18 +29,13 @@ public class PdpCommandInterceptor implements MessageHandlerInterceptor<CommandM
 
         log.info("!!!!!!     PdpCommandInterceptor pdp = {}", pdp);
         // command = GenericCommandMessage{payload={CreateAccountCommand(id=9171081e-c800-4903-8f4f-c0379eebab1a,
-        // deposit=150)}, metadata={'userDummy'->'maxFromInterceptor'}, messageIdentifier='394d6d44-0e68-4f84-ad5a-003aeb566e8e',
+        // deposit=150)}, metadata={'userName'->'axon'}, messageIdentifier='394d6d44-0e68-4f84-ad5a-003aeb566e8e',
         // commandName='com.example.axondemo.command.coreapi.CreateAccountCommand'
         log.info("!!!!!!     PdpCommandInterceptor command = {}", command);
 
 
         MetaData meta = command.getMetaData();
         String userName = meta.get("userName").toString();
-
-//        AuthorizationSubscription authzSubscription =
-//                AuthorizationSubscription.of(userName, "*", "*");
-
-
 
         AuthorizationSubscription authzSubscription =
                 AuthorizationSubscription.of(userName, "createAccount", "/createBankAccount");
@@ -51,17 +48,25 @@ public class PdpCommandInterceptor implements MessageHandlerInterceptor<CommandM
 
         if (authzDec.getDecision() == Decision.DENY) {
             log.info("### PdpCommandInterceptor : pdp - denied");
-//            apply(new AccountCreatedEventDenied(command.getId(), command.getDeposit()));
+            
+            var co = new CreateAccountRejectedCommand(null);
+            
+            unitOfWork.transformMessage(com -> {
+                return GenericCommandMessage.asCommandMessage(co);
+            });
+            log.info("transformed message command = {}", unitOfWork.getMessage());
 
-            // throw Exception
 
             // authInterceptor (nicht in Reihenfolge):
             // weitergeleitet an ein Auth Aggregate (ruft pdp auf)
             // ersetzt in neues command: AuthorisiereCommand mit dem ursprünglichen als Payload
             // dann weiterleiten an die darunterliegende Struktur (geht jetzt durch den Autorisierungsinterceptor)
+            
+            
+            //Transformiertes command wird hier weitergeleitet
+            //return interceptorChain.proceed();
 
             return null;
-
         }
 
 
