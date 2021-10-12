@@ -2,6 +2,7 @@ package com.example.axondemo.command;
 
 import java.util.UUID;
 
+import com.example.axondemo.annotations.TestAnnotation;
 import io.sapl.api.pdp.AuthorizationSubscription;
 import io.sapl.api.pdp.Decision;
 import org.axonframework.commandhandling.CommandHandler;
@@ -36,6 +37,7 @@ import org.springframework.data.mongodb.core.query.Meta;
 @Aggregate
 @NoArgsConstructor
 @AllArgsConstructor
+@TestAnnotation("preenforce")
 public class BankAccount {
 
     @AggregateIdentifier
