@@ -13,9 +13,6 @@ public class AxonDemoApplication {
         SpringApplication.run(AxonDemoApplication.class, args);
     }
 
-
-
-
 }
 
 

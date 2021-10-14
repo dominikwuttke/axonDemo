@@ -6,6 +6,7 @@ import com.example.axondemo.command.TestQuery;
 import com.example.axondemo.command.coreapi.CreateAccountCommand;
 import com.example.axondemo.command.coreapi.MoneyDepositCommand;
 import com.example.axondemo.command.coreapi.MoneyWithdrawCommand;
+import com.example.axondemo.command.coreapi.TestAnnotCommand;
 import com.example.axondemo.command.query.GetAccountByIdQuery;
 
 import lombok.AllArgsConstructor;
@@ -71,6 +72,12 @@ public class AxonRestController {
 
 
         commandGateway.send(new CreateAccountCommand(UUID.randomUUID().toString(),150));
+    }
+
+    @GetMapping("/accounts/testAnnot")
+    void testAnnot() throws Exception{
+            // check if BankAccount with id is available
+            commandGateway.send(new TestAnnotCommand("22a95f00-a85e-4ada-9975-0f66a22199a9"));
     }
 
     @GetMapping("/accounts/{id}")
