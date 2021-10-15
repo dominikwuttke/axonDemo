@@ -65,12 +65,12 @@ public class MyAxonSpringConfiguration {
         return commandBus;
     }
 
-    @Bean
-    public void registerAggregates() {
-
-        log.info(" configureAggregates()");
-        Configurer configurer = DefaultConfigurer.defaultConfiguration().configureAggregate(BankAccount.class);
-    }
+//    @Bean
+//    public void registerAggregates() {
+//
+//        log.info(" configureAggregates()");
+//        Configurer configurer = DefaultConfigurer.defaultConfiguration().configureAggregate(BankAccount.class);
+//    }
 
 //    @Bean
 //    public SimpleCommandBus commandBus(TransactionManager txManager, AxonConfiguration axonConfiguration) {

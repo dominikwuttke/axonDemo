@@ -8,6 +8,7 @@ import com.example.axondemo.command.coreapi.*;
 import io.sapl.api.pdp.AuthorizationSubscription;
 import io.sapl.api.pdp.Decision;
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.common.annotation.AnnotationUtils;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.messaging.InterceptorChain;
 import org.axonframework.messaging.MetaData;
@@ -29,7 +30,7 @@ import org.springframework.data.mongodb.core.query.Meta;
 @Data
 @Slf4j
 @Document
-//@Aggregate
+@Aggregate
 @NoArgsConstructor
 @AllArgsConstructor
 @PreEnforce
@@ -101,8 +102,18 @@ public class BankAccount {
     }
 
     @CommandHandler
-    public void testAnnot(TestAnnotCommand command) {
+    public void testAnnot(TestAnnotCommand command, MetaData meta) {
         log.info("CommandHandler = {}", command);
+
+
+        Class aggClass = this.getClass();
+        Annotation[] annotations =aggClass.getAnnotations();
+        log.info(" annotations n: {}", annotations.length);
+        log.info(" this.getCLass {}", aggClass);
+
+        for(Annotation annotation : annotations) {
+            log.info(" annotations {}", annotation);
+        }
     }
 
     @CommandHandlerInterceptor
@@ -112,8 +123,8 @@ public class BankAccount {
 
         Class aggClass = this.getClass();
         Annotation[] annotations =aggClass.getAnnotations();
-        log.info(" this.getCLass {}", aggClass);
 
+        // with standard code (Reflection API)
         for(Annotation annotation : annotations) {
             log.info(" annotations {}", annotation);
             if (annotation instanceof PreEnforce) {
@@ -129,6 +140,14 @@ public class BankAccount {
                 }
             }
         }
+
+        //with Axon Utils
+        if (AnnotationUtils.isAnnotationPresent(this.getClass(), PreEnforce.class)) {
+            log.info(" +++ AnnotationUtils: aggregate has PreEnforce annotation");
+        }
+
+
+
         interceptorChain.proceed();
     }
     
