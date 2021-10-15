@@ -33,7 +33,7 @@ import org.springframework.data.mongodb.core.query.Meta;
 @Aggregate
 @NoArgsConstructor
 @AllArgsConstructor
-@PreEnforce
+@PreEnforce(subject="Tom")
 public class BankAccount {
 
     @AggregateIdentifier
@@ -101,6 +101,7 @@ public class BankAccount {
     	apply(new MoneyDepositEvent(command.getId(), command.getDeposit()));
     }
 
+    @PreEnforce
     @CommandHandler
     public void testAnnot(TestAnnotCommand command, MetaData meta) {
         log.info("CommandHandler = {}", command);

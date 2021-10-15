@@ -6,6 +6,8 @@ import com.mongodb.client.MongoClient;
 import io.sapl.api.pdp.PolicyDecisionPoint;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.common.transaction.TransactionManager;
@@ -20,6 +22,7 @@ import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.extensions.mongo.DefaultMongoTemplate;
 import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoEventStorageEngine;
 import org.axonframework.messaging.ScopeAwareProvider;
+import org.axonframework.messaging.annotation.MessageHandler;
 import org.axonframework.messaging.annotation.ParameterResolverFactory;
 import org.axonframework.messaging.interceptors.CorrelationDataInterceptor;
 import org.axonframework.modelling.saga.ResourceInjector;
@@ -62,6 +65,25 @@ public class MyAxonSpringConfiguration {
         CommandBus commandBus = SimpleCommandBus.builder().build();
         commandBus.registerHandlerInterceptor(new MetaDataCommandInterceptor());
         commandBus.registerHandlerInterceptor(new PdpCommandInterceptor(pdp));
+        return commandBus;
+    }
+
+    @Bean
+    CommandBus configureCommandBUs(CommandBus commandBus) {
+
+        //refelction rekursiv
+
+        //wenn Aggregat gefunden
+        //suche @COmmandHandler
+        //wenn zusätzlich @Preenforce
+        // registriere CommandHandlerInterceptor
+
+
+
+//        MessageHandler handler =
+        //registriere CommandHandlerInterceptor auf CommandBus
+//        commandBus.subscribe("testCommand", commandHandler);
+
         return commandBus;
     }
 
